@@ -43,7 +43,8 @@
 
               heatmap = new google.maps.visualization.HeatmapLayer({
                 data: getPoints(),
-                map: map
+                map: map,
+                radius:20
               });
 
               getMarker(map);
