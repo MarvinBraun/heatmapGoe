@@ -30,6 +30,8 @@
 
             var map, heatmap;
 
+            //initialisiere Map
+
             function initMap() {
               map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 12,
@@ -37,7 +39,7 @@
                 mapTypeId: 'satellite'
               });
 
-            //set heatmap
+            //Lege Heatmap über Map
 
               heatmap = new google.maps.visualization.HeatmapLayer({
                 data: getPoints(),
@@ -52,37 +54,11 @@
 
             }
 
-            function toggleHeatmap() {
-              heatmap.setMap(heatmap.getMap() ? null : map);
-            }
-
-            function changeGradient() {
-              var gradient = [
-                'rgba(0, 255, 255, 0)',
-                'rgba(0, 255, 255, 1)',
-                'rgba(0, 191, 255, 1)',
-                'rgba(0, 127, 255, 1)',
-                'rgba(0, 63, 255, 1)',
-                'rgba(0, 0, 255, 1)',
-                'rgba(0, 0, 223, 1)',
-                'rgba(0, 0, 191, 1)',
-                'rgba(0, 0, 159, 1)',
-                'rgba(0, 0, 127, 1)',
-                'rgba(63, 0, 91, 1)',
-                'rgba(127, 0, 63, 1)',
-                'rgba(191, 0, 31, 1)',
-                'rgba(255, 0, 0, 1)'
-              ]
-              heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
-            }
-
-            // Heatmap data: 500 Points
+            //Punkte definieren
             function getPoints() {
-              
-            carstations = JSON.parse("{{ carstations|escapejs }}");
-           
+            carRentalsJS = JSON.parse("{{ carRentalsJS|escapejs }}");
             var stations = [];
-            carstations.forEach(function(station){
+            carRentalsJS.forEach(function(station){
               stations.push({location: new google.maps.LatLng(station[0],station[1]), weight:station[2]});   
               });
 
@@ -90,15 +66,13 @@
             return stations; 
           }
 
+          //Marker definieren
           function getMarker(map) {
               
 
-            carstations = JSON.parse("{{ carstations|escapejs }}");
+            carRentalsJS = JSON.parse("{{ carRentalsJS|escapejs }}");
             var mapmarker = [];
-
-            console.log(carstations);
-
-            carstations.forEach(function(station){
+            carRentalsJS.forEach(function(station){
               var pos = {lat: station[0], lng: station[1]};
               var marker = new google.maps.Marker({
                 position: pos,
@@ -109,6 +83,23 @@
 
             marker.setMap(map)
             });
+          }
+
+          //Funktion zum Zoomen in die Map
+            function listItemClicked(label){
+             var pos;
+
+            carRentalsJS = JSON.parse("{{ carRentalsJS|escapejs }}");
+
+             carRentalsJS.forEach(function(rental){
+              if (rental[4] == label){
+                pos = {lat: rental[0], lng: rental[1]};
+              }
+             });
+
+            map.setZoom(15);
+            map.setCenter(pos);
+
           }
 
 
@@ -125,17 +116,20 @@
       <div class="col-lg-4">
 
         <div class="list-group" height=400px>
-          {% for car in carstations2 %}
+       
+           {% for rental in carRentalsHTML %}
 
             <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-            <h3 class="mb-1"> Name: {{ car.name }}</h5>
-            <small> Adresse: {{ car.address}}</small>
-            <p class="mb-1"> Buchungen: {{ car.bookings }}</small>
+            <div class="d-flex w-100 justify-content-between" onclick="listItemClicked('{{ rental.label }}')">
+            <h3 class="mb-1">{{ rental.label }} - {{ rental.name }}</h5>
+            <small> Adresse: {{ rental.address}}</small>
+            <p class="mb-1"> Buchungen: {{ rental.bookings }}</small>
             </div>
             </a>
 
           {% endfor %}
+
+
 
     </div>
 

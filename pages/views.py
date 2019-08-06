@@ -12,22 +12,55 @@ from django.core.wsgi import get_wsgi_application
 
 def home_view(request,*args, **kwargs):
 	objects = Carstation.objects.all()
-	carstations = []
-	carstations2 = []
 	labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-	#Koordinaten für Google Maps
+	#carRental JS= genutzt für getMarker / getPoints
+	carRentalsJS = _getCarRentalsForJS()
+	#carRentalHTML= genutzt für ListGroup
+	carRentalsHTML = _getCarRentalsForHTML()
+	#Java API KEY
+	key = _readAPIKey()
 
-	for index, carstation in enumerate(objects):
+	return render(request, "home.html",{'carRentalsJS': carRentalsJS, 'carRentalsHTML': carRentalsHTML,'key':key})
+
+def contact_view(request,*args, **kwargs):
+	return render(request, "contact.html", {})
+
+def start_view(request,*args, **kwargs):
+	return render(request, "start.html", {})
+
+
+
+
+
+
+def _getCarRentalsForJS():
+	labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	objects = Carstation.objects.all()
+	carRentals = []
+
+	for index, carRental in enumerate(objects):
 		label = labels[index % len(labels)]
-		carstations.append([float(carstation.lengtitude),float(carstation.longtitude),float(carstation.bookings),carstation.name,label])
-		#print(carstation['name'] + " " + str(carstation['lengtitude']))
-	carstations = json.dumps(carstations)
-	print(type(carstations))
+		carRentals.append([
+			 float(carRental.lengtitude),
+			 float(carRental.longtitude),
+			 float(carRental.bookings),
+			carRental.name, label
+			 ])
 
-	#Autovermietungen Objekte für Tabelle
-	carstations2 = Carstation.objects.values()
+	return json.dumps(carRentals)
 
-	#Google Api Key
+
+def _getCarRentalsForHTML():
+	labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	# Autovermietungen Objekte für Tabelle
+	carRentals = Carstation.objects.values()
+
+	for index, carRental in enumerate(carRentals):
+		carRental['label'] = labels[index % len(labels)]
+
+	return carRentals
+
+def _readAPIKey():
 	env = environ.Env(API=str)
 	environ.Env.read_env()
 	api = env('API')
@@ -36,13 +69,4 @@ def home_view(request,*args, **kwargs):
 	api.append(api_key)
 	key = "https://maps.googleapis.com/maps/api/js?key="+api_key+"&libraries=visualization&callback=initMap"
 
-	#print(dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname("Secret_Keys")), '.env')))
-
-
-	return render(request, "home.html",{'carstations':carstations, 'carstations2':carstations2,'key':key})
-
-def contact_view(request,*args, **kwargs):
-	return render(request, "contact.html", {})
-
-def start_view(request,*args, **kwargs):
-	return render(request, "start.html", {})
+	return key
