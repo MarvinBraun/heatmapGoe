@@ -1,0 +1,4 @@
+.env
+secret_keys
+API_KEY
+db.sqlite3

@@ -1,31 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <title>Autovermietung Göttingen</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <style>
-    body {
+ body {
       font: 20px Montserrat, sans-serif;
       line-height: 1.8;
       color: #f5f6f7;
     }
 
-    #sticky-footer {
-  flex-shrink: none;
+    html,body{
+    height: 100%
 }
-
     p {font-size: 16px;}
     .margin {margin-bottom: 45px;}
     .bg-1 { 
       background-color: #1abc9c; /* Green */
       color: #ffffff;
     }
+    
     .bg-2 { 
       background-color: #474e5d; /* Dark Blue */
       color: #ffffff;
@@ -67,29 +55,3 @@
     overflow:scroll;
     -webkit-overflow-scrolling: touch;
 }
-
-    </style>
-
-  </head>
-
-<body>
-
-{% include "nav.html"%}
-
-<!-- Maps Container -->
- 
-
-			    {% block content %} 
-
-				  {% endblock %}
-
-		    
-	
-
-
-
-{% include "footer.html"%}
-
-</body>
-
-</html>

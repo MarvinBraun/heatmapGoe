@@ -5,123 +5,148 @@
 
 
 
-   <div class="container-fluid bg-3">
+<div class="container-fluid bg-3">
 
-       <div class="row">
+  <div class="row">
 
-          <div class="col-lg-8">
+    <div class="col-lg-8">
+      <h2>Autovermietungen in Göttingen:</h2>
+    </div>
 
-            <div id="map"></div>
-
-         
-
-            <script>
-
+    <div class="col-lg-4">
+    </div>
 
 
 
-              // This example requires the Visualization library. Include the libraries=visualization
-              // parameter when you first load the API. For example:
-              // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization">
+  </div>
 
-              var map, heatmap;
+    <div class="row">
 
-              function initMap() {
-                map = new google.maps.Map(document.getElementById('map'), {
-                  zoom: 14,
-                  center: {lat: 51.533767,lng: 9.934980},
-                  mapTypeId: 'satellite'
-                });
+      <div class="col-lg-8">
 
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                  data: getPoints(),
-                  radius: 30,
-                  map: map
-                });
-              }
+        <div id="map"></div>
 
-              function toggleHeatmap() {
-                heatmap.setMap(heatmap.getMap() ? null : map);
-              }
+          <script>
 
-              function changeGradient() {
-                var gradient = [
-                  'rgba(0, 255, 255, 0)',
-                  'rgba(0, 255, 255, 1)',
-                  'rgba(0, 191, 255, 1)',
-                  'rgba(0, 127, 255, 1)',
-                  'rgba(0, 63, 255, 1)',
-                  'rgba(0, 0, 255, 1)',
-                  'rgba(0, 0, 223, 1)',
-                  'rgba(0, 0, 191, 1)',
-                  'rgba(0, 0, 159, 1)',
-                  'rgba(0, 0, 127, 1)',
-                  'rgba(63, 0, 91, 1)',
-                  'rgba(127, 0, 63, 1)',
-                  'rgba(191, 0, 31, 1)',
-                  'rgba(255, 0, 0, 1)'
-                ]
-                heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
-              }
+            var map, heatmap;
 
-              function changeRadius() {
-                heatmap.set('radius', heatmap.get('radius') ? null : 500);
-              }
+            function initMap() {
+              map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: {lat: 51.533767,lng: 9.934980},
+                mapTypeId: 'satellite'
+              });
 
-              function changeOpacity() {
-                heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
-              }
+            //set heatmap
 
-              // Heatmap data: 500 Points
-              function getPoints() {
-                
-              carstations = JSON.parse("{{ carstations }}");
-              var stations = [];
-              carstations.forEach(function(station)) {
+              heatmap = new google.maps.visualization.HeatmapLayer({
+                data: getPoints(),
+                map: map
+              });
 
-                stations.push(new google.maps.LatLng(station[1],station[2]));
+              getMarker(map);
 
-                  
-              }
+              // set Marker 
 
-              return stations;
-              
+
+
             }
 
+            function toggleHeatmap() {
+              heatmap.setMap(heatmap.getMap() ? null : map);
+            }
 
-               
-            </script>
-            <script async defer
-                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCp5NBnpKRMXat0vA9F1CiR1k48yNcjYdc&libraries=visualization&callback=initMap">
-            </script>
+            function changeGradient() {
+              var gradient = [
+                'rgba(0, 255, 255, 0)',
+                'rgba(0, 255, 255, 1)',
+                'rgba(0, 191, 255, 1)',
+                'rgba(0, 127, 255, 1)',
+                'rgba(0, 63, 255, 1)',
+                'rgba(0, 0, 255, 1)',
+                'rgba(0, 0, 223, 1)',
+                'rgba(0, 0, 191, 1)',
+                'rgba(0, 0, 159, 1)',
+                'rgba(0, 0, 127, 1)',
+                'rgba(63, 0, 91, 1)',
+                'rgba(127, 0, 63, 1)',
+                'rgba(191, 0, 31, 1)',
+                'rgba(255, 0, 0, 1)'
+              ]
+              heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+            }
 
-        </div>
+            // Heatmap data: 500 Points
+            function getPoints() {
+              
+            carstations = JSON.parse("{{ carstations|escapejs }}");
+           
+            var stations = [];
+            carstations.forEach(function(station){
+              stations.push({location: new google.maps.LatLng(station[0],station[1]), weight:station[2]});   
+              });
 
-          <div class="col-lg-4">
+            console.log(stations);
+            return stations; 
+          }
 
-               <div class="panel panel-primary" id="result_panel">
-                  <div class="panel-heading"><h3 class="panel-title">Autovermietungen in Göttingen</h3>
-                  </div>
-                  <div class="panel-body">
+          function getMarker(map) {
+              
 
-                      <ul class="list-group">
+            carstations = JSON.parse("{{ carstations|escapejs }}");
+            var mapmarker = [];
 
-                        {% for car in carstations %}
+            console.log(carstations);
 
-                        <li class="list-group-item"><strong> {{ car["name"] }} </strong>
+            carstations.forEach(function(station){
+              var pos = {lat: station[0], lng: station[1]};
+              var marker = new google.maps.Marker({
+                position: pos,
+                map: map,
+                label: station[4],
+                title: station[3]
+              });
 
-                        {% endfor %}  
-                          
-                    
-                      </ul>
-                  </div>
-                </div>
+            marker.setMap(map)
+            });
+          }
+
+
+      
+
+             
+          </script>
+          <script async defer
+              src="{{key}}">
+          </script>
 
           </div>
 
-       </div>
+      <div class="col-lg-4">
+
+        <div class="list-group" height=400px>
+          {% for car in carstations2 %}
+
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+            <h3 class="mb-1"> Name: {{ car.name }}</h5>
+            <small> Adresse: {{ car.address}}</small>
+            <p class="mb-1"> Buchungen: {{ car.bookings }}</small>
+            </div>
+            </a>
+
+          {% endfor %}
 
     </div>
+
+
+
+
+      </div>
+
+   </div>
+
+</div>
 
 
 
