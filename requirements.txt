@@ -1,4 +1,4 @@
 django_environ==0.4.5
-Django==2.2.3
+Django==2.2.10
 python-dotenv==0.10.3
 environ==1.0
